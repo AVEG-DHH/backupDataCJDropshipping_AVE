@@ -145,10 +145,7 @@ const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
 
             if (dataLB.fields.orderId == dataCJ.orderId) {
                 let keysToCheck = [
-                    "orderNum", "cjOrderId", "shippingCountryCode", "shippingProvince",
-                    "shippingCity", "shippingPhone", "shippingAddress", "shippingCustomerName",
-                    "remark", "orderWeight", "orderStatus", "orderAmount", "productAmount",
-                    "postageAmount", "logisticName", "trackNumber", "createDate", "paymentDate"
+                    "orderStatus", "trackNumber", "logisticName", "orderAmount", "paymentDate"
                 ];
 
                 let hasChanged = keysToCheck.some(key => String(dataLB.fields[key] || "") !== String(dataCJ[key] || ""));
@@ -288,14 +285,11 @@ const getOrderList = async () => {
     // Update record data
     console.log(ordersListUpdate.length);
     if (ordersListUpdate.length > 0) {
-        let arrOrderId = [];
         for (var k = 0; k < ordersListUpdate.length; k++) {
             let data = ordersListUpdate[k];
-            console.log("Update: ...", k," - ", data.orderId);
-            arrOrderId.push(data.orderId);
+            console.log("Update: ...", k, " - ", data.orderId);
             await updateDataLarkOrders(formatDataCJOrderUpdate(data));
         }
-        console.log(arrOrderId);
     }
 };
 
