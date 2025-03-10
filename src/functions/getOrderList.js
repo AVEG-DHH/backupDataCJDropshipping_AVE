@@ -89,7 +89,9 @@ const getDataLarkBase = async () => {
                         'Content-Type': 'application/json',
                     },
                     params: {
-                        "page_token": pageToken
+                        "page_token": pageToken,
+                        "page_size": 500,
+                        view_id: process.env.LARK_VIEW_ID_ORDERS
                     }
                 }
             );
@@ -156,14 +158,12 @@ const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
                 break;
             };
 
-            if (j == arrLB.length - 1) {
+            if (j == arrLB.length - 1 && !["CANCELLED", "DELIVERED", "TRASH"].includes(dataCJ.orderStatus)) {
                 ordersListNew.push(dataCJ);
             }
         };
     };
 };
-
-
 
 const formatDataCJOrder = (data) => {
     return {
@@ -276,8 +276,8 @@ const getOrderList = async () => {
     console.log(ordersListNew.length);
     if (ordersListNew.length > 0) {
         for (var j = 0; j < ordersListNew.length; j++) {
-            console.log("New: ...", j);
             let data = ordersListNew[j];
+            console.log("New: ...", j, " - ", data.orderId);
             await sendLarkOrders(formatDataCJOrder(data));
         }
     }
