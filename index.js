@@ -19,7 +19,7 @@ const backupDataCJ = async () => {
     await getOrderList();
 };
 
-cron.schedule("15 0 * * *", backupDataCJ, {
+cron.schedule("28 10 * * *", backupDataCJ, {
     timezone: "Asia/Ho_Chi_Minh",
 });
 

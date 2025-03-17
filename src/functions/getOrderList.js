@@ -273,7 +273,6 @@ const getOrderList = async () => {
     await getDataNewUpdateCJ(ordersListPrimary, arrLarkBaseData);
 
     // Add record data New
-    console.log(ordersListNew.length);
     if (ordersListNew.length > 0) {
         for (var j = 0; j < ordersListNew.length; j++) {
             let data = ordersListNew[j];
@@ -283,7 +282,6 @@ const getOrderList = async () => {
     }
 
     // Update record data
-    console.log(ordersListUpdate.length);
     if (ordersListUpdate.length > 0) {
         for (var k = 0; k < ordersListUpdate.length; k++) {
             let data = ordersListUpdate[k];
@@ -291,6 +289,8 @@ const getOrderList = async () => {
             await updateDataLarkOrders(formatDataCJOrderUpdate(data));
         }
     }
+    console.log(ordersListNew.length);
+    console.log(ordersListUpdate.length);
 };
 
 module.exports = getOrderList;
