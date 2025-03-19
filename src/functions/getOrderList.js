@@ -145,7 +145,7 @@ const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
         for (let j = 0; j < arrLB.length; j++) {
             let dataLB = formatDataGetLarkBase(arrLB[j]);
 
-            if (dataLB.fields.orderId == dataCJ.orderId) {
+            if (String(dataLB.fields.orderId) == String(dataCJ.orderId)) {
                 let keysToCheck = [
                     "orderStatus", "trackNumber", "logisticName", "orderAmount", "paymentDate"
                 ];
@@ -289,8 +289,10 @@ const getOrderList = async () => {
             await updateDataLarkOrders(formatDataCJOrderUpdate(data));
         }
     }
-    console.log(ordersListNew.length);
-    console.log(ordersListUpdate.length);
+    console.log("New: ", ordersListNew.length);
+    console.log("New object: ", ordersListNew[0]);
+    console.log("Update: ", ordersListUpdate.length);
+    console.log("Update object: ", ordersListUpdate[0]);
 };
 
 module.exports = getOrderList;
