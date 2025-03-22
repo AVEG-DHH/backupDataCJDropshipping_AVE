@@ -145,7 +145,7 @@ const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
         for (let j = 0; j < arrLB.length; j++) {
             let dataLB = formatDataGetLarkBase(arrLB[j]);
 
-            if (String(dataLB.fields.orderId) == String(dataCJ.orderId)) {
+            if (String(dataLB.fields.orderId).trim() == String(dataCJ.orderId).trim()) {
                 let keysToCheck = [
                     "orderStatus", "trackNumber", "logisticName", "orderAmount", "paymentDate"
                 ];
