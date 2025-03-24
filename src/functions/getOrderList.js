@@ -147,7 +147,8 @@ const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
 
             if (String(dataLB.fields.orderId).trim() == String(dataCJ.orderId).trim()) {
                 let keysToCheck = [
-                    "orderStatus", "trackNumber", "logisticName", "orderAmount", "paymentDate"
+                    "orderNum", "cjOrderId", "shippingCountryCode", "shippingProvince", "shippingCity", "shippingPhone", "shippingAddress", "shippingCustomerName", "remark", "orderWeight",
+                    "orderStatus", "orderAmount", "productAmount", "postageAmount", "logisticName", "trackNumber", "createDate", "paymentDate"
                 ];
 
                 let hasChanged = keysToCheck.some(key => String(dataLB.fields[key] || "") !== String(dataCJ[key] || ""));
