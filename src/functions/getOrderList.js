@@ -140,22 +140,33 @@ const formatDataGetLarkBase = (data) => {
 
 const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
     for (let i = 0; i < arrCJ.length; i++) {
-        let dataCJ = arrCJ[i];
+        let dataCJ = formatDataCJOrder(arrCJ[i]);
 
         for (let j = 0; j < arrLB.length; j++) {
             let dataLB = formatDataGetLarkBase(arrLB[j]);
 
             if (String(dataLB.fields.orderId).trim() == String(dataCJ.orderId).trim()) {
-                let keysToCheck = [
-                    "orderNum", "cjOrderId", "shippingCountryCode", "shippingProvince", "shippingCity", "shippingPhone", "shippingAddress", "shippingCustomerName", "remark", "orderWeight",
-                    "orderStatus", "orderAmount", "productAmount", "postageAmount", "logisticName", "trackNumber", "createDate", "paymentDate"
-                ];
-
-                let hasChanged = keysToCheck.some(key => String(dataLB.fields[key] || "") !== String(dataCJ[key] || ""));
-
-                if (hasChanged) {
+                if (dataCJ.orderNum !== dataLB.fields.orderNum
+                    || dataCJ.shippingCountryCode !== dataLB.fields.shippingCountryCode
+                    || dataCJ.shippingProvince !== dataLB.fields.shippingProvince
+                    || dataCJ.shippingCity !== dataLB.fields.shippingCity
+                    || dataCJ.shippingPhone !== dataLB.fields.shippingPhone
+                    || dataCJ.shippingAddress !== dataLB.fields.shippingAddress
+                    || dataCJ.shippingCustomerName !== dataLB.fields.shippingCustomerName
+                    || dataCJ.remark !== dataLB.fields.remark
+                    || dataCJ.orderWeight !== dataLB.fields.orderWeight
+                    || dataCJ.orderStatus !== dataLB.fields.orderStatus
+                    || dataCJ.orderAmount !== dataLB.fields.orderAmount
+                    || dataCJ.productAmount !== dataLB.fields.productAmount
+                    || dataCJ.postageAmount !== dataLB.fields.postageAmount
+                    || dataCJ.logisticName !== dataLB.fields.logisticName
+                    || dataCJ.trackNumber !== dataLB.fields.trackNumber
+                    || dataCJ.createDate !== dataLB.fields.createDate
+                    || dataCJ.paymentDate !== dataLB.fields.paymentDate
+                ) {
                     ordersListUpdate.push({ ...dataCJ, record_id: dataLB.record_id });
                 };
+
                 break;
             };
 
@@ -272,7 +283,8 @@ const getOrderList = async () => {
     }
 
     await getDataNewUpdateCJ(ordersListPrimary, arrLarkBaseData);
-
+    console.log("New: ", ordersListNew.length);
+    console.log("Update: ", ordersListUpdate.length);
     // Add record data New
     if (ordersListNew.length > 0) {
         for (var j = 0; j < ordersListNew.length; j++) {
@@ -291,9 +303,7 @@ const getOrderList = async () => {
         }
     }
     console.log("New: ", ordersListNew.length);
-    console.log("New object: ", ordersListNew[0]);
     console.log("Update: ", ordersListUpdate.length);
-    console.log("Update object: ", ordersListUpdate[0]);
 };
 
 module.exports = getOrderList;
