@@ -141,11 +141,13 @@ const formatDataGetLarkBase = (data) => {
 const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
     for (let i = 0; i < arrCJ.length; i++) {
         let dataCJ = formatDataCJOrder(arrCJ[i]);
+        let found = false;
 
         for (let j = 0; j < arrLB.length; j++) {
             let dataLB = formatDataGetLarkBase(arrLB[j]);
 
             if (String(dataLB.fields.orderId).trim() == String(dataCJ.orderId).trim()) {
+                found = true;
                 if (dataCJ.orderNum !== dataLB.fields.orderNum
                     || dataCJ.shippingCountryCode !== dataLB.fields.shippingCountryCode
                     || dataCJ.shippingProvince !== dataLB.fields.shippingProvince
@@ -170,7 +172,7 @@ const getDataNewUpdateCJ = async (arrCJ, arrLB) => {
                 break;
             };
 
-            if (j == arrLB.length - 1 && !["CANCELLED", "DELIVERED", "TRASH"].includes(dataCJ.orderStatus)) {
+            if (j == arrLB.length - 1 && !["CANCELLED", "DELIVERED", "TRASH"].includes(dataCJ.orderStatus) && !found) {
                 ordersListNew.push(dataCJ);
             }
         };
