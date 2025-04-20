@@ -274,7 +274,67 @@ const updateDataLarkOrders = async (fields) => {
     }
 };
 
+const checkDuplicateOrderIds = (dataList) => {
+    const seenOrderIds = new Map();
+    const duplicates = [];
+
+    dataList.forEach((item) => {
+        const orderId = item.fields.orderId;
+        const recordId = item.record_id;
+
+        if (seenOrderIds.has(orderId)) {
+            // Nếu đã từng thấy rồi => thêm bản ghi mới vào danh sách duplicates
+            duplicates.push({ orderId, record_id: recordId });
+        } else {
+            // Nếu chưa thấy => đánh dấu là đã thấy
+            seenOrderIds.set(orderId, true);
+        }
+    });
+
+    return duplicates;
+};
+
+const deleteRecord = async (recordId) => {
+    try {
+        const res = await axios.delete(
+            `https://open.larksuite.com/open-apis/bitable/v1/apps/${process.env.LARK_APP_TOKEN_CJ_BASECOST}/tables/${process.env.LARK_TABLE_ID_CJ_BASECOST_ORDER}/records/${recordId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${LARK_ACCESS_TOKEN}`,
+                    'Content-Type': 'application/json',
+                }
+            }
+        );
+
+        console.log("Xoá thành công:", res.data);
+    } catch (err) {
+        // 📌 Nếu token hết hạn (code: 99991663), lấy token mới rồi thử lại
+        if (error.response?.data?.code === 99991663 || error.response?.data?.code === 99991661 || error.response?.data?.code === 99991668) {
+            LARK_ACCESS_TOKEN = await refreshTokenLark();
+            return deleteRecord();
+        }
+        throw error;
+    }
+};
+
+const deleteReocrdLark = async () => {
+    let arrLarkBaseDataDelete = await getDataLarkBase();
+    let arrIDUnique = await checkDuplicateOrderIds(arrLarkBaseDataDelete);
+    if (arrIDUnique.length == 0) {
+        console.log("Không có bản ghi nào trùng lặp");
+        return;
+    }
+    for (let index = 0; index < arrIDUnique.length; index++) {
+        const element = arrIDUnique[index];
+        console.log("Xoá bản ghi trùng lặp: ", element);
+        await deleteRecord(element.record_id);
+    }
+    console.log("Xoá bản ghi trùng lặp thành công");
+};
+
 const getOrderList = async () => {
+    await deleteReocrdLark();
+
     let arrLarkBaseData = await getDataLarkBase();
     totalOrdersList = await getTotalOrderList();
 
@@ -285,8 +345,6 @@ const getOrderList = async () => {
     }
 
     await getDataNewUpdateCJ(ordersListPrimary, arrLarkBaseData);
-    console.log("New: ", ordersListNew.length);
-    console.log("Update: ", ordersListUpdate.length);
     // Add record data New
     if (ordersListNew.length > 0) {
         for (var j = 0; j < ordersListNew.length; j++) {
