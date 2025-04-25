@@ -317,9 +317,44 @@ const deleteRecord = async (recordId) => {
     }
 };
 
+const getDataLarkBaseNew = async () => {
+    let allDataLB = [];
+    let pageToken = "" || null;
+    try {
+        do {
+            const response = await axios.get(
+                `${LARK_API_CJ_ORDER}`,  // Cập nhật với đường dẫn lấy dữ liệu
+                {
+                    headers: {
+                        Authorization: `Bearer ${LARK_ACCESS_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    params: {
+                        "page_token": pageToken,
+                        "page_size": 500,
+                    }
+                }
+            );
+
+            allDataLB.push(...response.data?.data?.items);
+            pageToken = response.data?.data?.page_token || null;
+        } while (pageToken)
+
+        return allDataLB;
+    } catch (error) {
+        // 📌 Nếu token hết hạn (code: 99991663), lấy token mới rồi thử lại
+        if (error.response?.data?.code === 99991663 || error.response?.data?.code === 99991661 || error.response?.data?.code === 99991668) {
+            LARK_ACCESS_TOKEN = await refreshTokenLark();
+            return getDataLarkBaseNew();
+        }
+        throw error;
+    }
+}
+
 const deleteReocrdLark = async () => {
-    let arrLarkBaseDataDelete = await getDataLarkBase();
+    let arrLarkBaseDataDelete = await getDataLarkBaseNew();
     let arrIDUnique = await checkDuplicateOrderIds(arrLarkBaseDataDelete);
+    console.log("Bản ghi trùng lặp: ", arrIDUnique);
     if (arrIDUnique.length == 0) {
         console.log("Không có bản ghi nào trùng lặp");
         return;
